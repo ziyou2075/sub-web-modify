@@ -1,22 +1,29 @@
 <template>
-  <div>
-    <el-row style="margin-top: 10px">
+  <div class="subconverter-page">
+    <div class="subconverter-glow subconverter-glow--one"></div>
+    <div class="subconverter-glow subconverter-glow--two"></div>
+    <el-row class="subconverter-layout" style="margin-top: 10px">
       <el-col>
-        <el-card>
-          <div slot="header">
-            <svg-icon class="gayhub" icon-class="github" style="float:left" @click="goToProject" />
-            <svg-icon class="dianbao" icon-class="telegram" style="float:left;margin-left: 10px"
-              @click="gotoTgChannel" />
-            <!--
-              <svg-icon class="bilibili" icon-class="bilibili" style="float:right;margin-left:10px"
-              @click="gotoBiliBili" /> -->
-            <svg-icon class="youguan" icon-class="youtube" style="float:right;margin-left:10px" @click="gotoYouTuBe" />
-            <svg-icon class="channel" icon-class="telegram" style="float:right;margin-left: 10px"
-              @click="gotoTgChannel" />
-            <div style="text-align:center;font-size:15px">订 阅 转 换</div>
+        <el-card class="subconverter-card">
+          <div slot="header" class="subconverter-hero">
+            <div class="subconverter-hero__copy">
+              <span class="subconverter-hero__eyebrow">SUB WEB / NEXT</span>
+              <div class="subconverter-hero__topline">
+                <h1 class="subconverter-hero__title">订阅转换</h1>
+                <div class="subconverter-hero__stats">
+                  <div class="subconverter-stat subconverter-stat--backend">
+                    <span>后端版本</span>
+                    <strong>{{ backendVersion || "等待检测" }}</strong>
+                  </div>
+                </div>
+              </div>
+              <p class="subconverter-hero__desc">
+                在线订阅转换场景，适配 Clash、Surge、Sing-Box 等常见使用环境。
+              </p>
+            </div>
           </div>
-          <el-container>
-            <el-form :model="form" label-width="80px" label-position="left" style="width: 100%">
+          <el-container class="subconverter-container">
+            <el-form class="subconverter-form" :model="form" label-width="92px" label-position="left" style="width: 100%">
               <el-form-item label="订阅链接:">
                 <el-input v-model="form.sourceSubUrl" type="textarea" rows="3"
                   placeholder="支持各种订阅链接或单节点链接，多个链接每行一个或用 | 分隔" />
@@ -38,6 +45,7 @@
                   <el-option v-for="(v, k) in options.shortTypes" :key="k" :label="k" :value="v"></el-option>
                 </el-select>
               </el-form-item>
+
               <el-form-item label="远程配置:">
                 <el-select v-model="form.remoteConfig" allow-create filterable placeholder="请选择" style="width: 100%">
                   <el-option-group v-for="group in options.remoteConfig" :key="group.label" :label="group.label">
@@ -46,8 +54,8 @@
                   </el-option-group>
                 </el-select>
               </el-form-item>
-              <el-form-item label-width="0px">
-                <el-collapse>
+              <el-form-item class="subconverter-advanced__wrap" label-width="0px">
+                <el-collapse class="subconverter-advanced">
                   <el-collapse-item>
                     <template slot="title">
                       <el-form-item label="高级功能:" style="width: 100%;">
@@ -150,45 +158,29 @@
                 </el-collapse>
               </el-form-item>
               <div style="margin-top: 30px"></div>
-              <el-divider content-position="center">
-                <el-button type="zhuti" @click="change">
-                  <i id="rijian" class="el-icon-sunny"></i>
-                  <i id="yejian" class="el-icon-moon"></i>
-                </el-button>
-              </el-divider>
-              <el-form-item label="定制订阅:">
+              <el-form-item class="subconverter-output" label="定制订阅:">
                 <el-input class="copy-content" disabled v-model="customSubUrl">
                   <el-button slot="append" v-clipboard:copy="customSubUrl" v-clipboard:success="onCopy" ref="copy-btn"
                     icon="el-icon-document-copy">复制
                   </el-button>
                 </el-input>
               </el-form-item>
-              <el-form-item label="订阅短链:">
+              <el-form-item class="subconverter-output" label="订阅短链:">
                 <el-input class="copy-content" v-model="customShortSubUrl" placeholder="输入自定义短链接后缀，点击生成短链接可反复生成">
                   <el-button slot="append" v-clipboard:copy="customShortSubUrl" v-clipboard:success="onCopy"
                     ref="copy-btn" icon="el-icon-document-copy">复制
                   </el-button>
                 </el-input>
               </el-form-item>
-              <el-form-item label-width="0px" style="margin-top: 40px; text-align: center">
-                <el-button style="width: 120px" type="danger" @click="makeUrl"
+              <el-form-item class="subconverter-action-row" label-width="0px" style="margin-top: 40px; text-align: center">
+                <el-button class="subconverter-main-btn" style="width: 120px" type="danger" @click="makeUrl"
                   :disabled="form.sourceSubUrl.length === 0 || btnBoolean">生成订阅链接
                 </el-button>
-                <el-button style="width: 120px" type="danger" @click="makeShortUrl" :loading="loading1"
+                <el-button class="subconverter-main-btn subconverter-main-btn--alt" style="width: 120px" type="danger" @click="makeShortUrl" :loading="loading1"
                   :disabled="customSubUrl.length === 0">生成短链接
                 </el-button>
-              </el-form-item>
-              <el-form-item label-width="0px" style="text-align: center">
-                <el-button style="width: 120px" type="primary" @click="dialogUploadConfigVisible = true"
-                  icon="el-icon-upload" :loading="loading2">自定义配置
-                </el-button>
-                <el-button style="width: 120px" type="primary" @click="dialogLoadConfigVisible = true"
-                  icon="el-icon-copy-document" :loading="loading3">从URL解析
-                </el-button>
-              </el-form-item>
-              <el-form-item label-width="0px" style="text-align: center">
-                <el-button style="width: 250px;" type="success" icon="el-icon-video-play"
-                  @click="centerDialogVisible = true">视频教程
+                <el-button class="subconverter-main-btn subconverter-main-btn--parse" style="width: 120px" type="primary"
+                  icon="el-icon-copy-document" @click="dialogLoadConfigVisible = true" :loading="loading3">从URL解析
                 </el-button>
               </el-form-item>
             </el-form>
@@ -196,7 +188,31 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-dialog title="请选择需要观看的视频教程" :visible.sync="centerDialogVisible" :show-close="false" width="40vh" top="30vh"
+    <div class="subconverter-social-dock" aria-label="页面底部快捷入口">
+      <button class="subconverter-social-btn" type="button" @click="goToProject" aria-label="GitHub" title="GitHub">
+        <svg viewBox="0 0 24 24" fill="none" class="subconverter-social-btn__icon" aria-hidden="true">
+          <path d="M9.2 19.1v-3.2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 .1 1.6.8 1.9 1.4.9.4 1.8.3 2.5.1.1-.7.4-1.2.7-1.5-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.1-3.1-.1-.3-.5-1.5.1-3 0 0 .9-.3 3.2 1.2a10.7 10.7 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.5.2 2.7.1 3 .7.8 1.1 1.8 1.1 3.1 0 4.4-2.7 5.3-5.3 5.7.4.4.8 1 .8 2.1v3.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8.9 18.8c-3.5 1.1-6-1.4-6-1.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="subconverter-social-btn" type="button" @click="gotoTgChannel" aria-label="Telegram" title="Telegram">
+        <svg viewBox="0 0 24 24" fill="none" class="subconverter-social-btn__icon" aria-hidden="true">
+          <path d="M21 4.5 3.8 11.2c-.8.3-.8 1.4 0 1.6l4.1 1.4 1.6 5c.2.8 1.2 1 1.7.4l2.4-2.7 4.2 3.1c.7.5 1.7.1 1.9-.8L22 5.8c.2-.9-.5-1.7-1.4-1.3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+          <path d="m8 14 9.1-6.7M9.5 18.5 11 14l7.6-6.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="subconverter-social-btn" type="button" @click="gotoYouTuBe" aria-label="YouTube" title="YouTube">
+        <svg viewBox="0 0 24 24" fill="none" class="subconverter-social-btn__icon" aria-hidden="true">
+          <rect x="3.5" y="6" width="17" height="12" rx="4.2" stroke="currentColor" stroke-width="1.7"/>
+          <path d="m10 9.4 5.5 2.7-5.5 2.7V9.4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="subconverter-social-btn subconverter-social-btn--theme" type="button" @click="change" aria-label="切换主题">
+        <i id="rijian" class="el-icon-sunny subconverter-theme-toggle-icon"></i>
+        <i id="yejian" class="el-icon-moon subconverter-theme-toggle-icon"></i>
+      </button>
+    </div>
+    <el-dialog title="请选择需要观看的视频教程" :visible.sync="centerDialogVisible" custom-class="subconverter-dialog" :show-close="true" width="420px" top="22vh"
       center>
       <div label-width="0px" style="text-align: center">
         <el-button style="width: 200px;" type="primary" icon="el-icon-video-play"
@@ -208,12 +224,8 @@
           @click="gotoAdvancedVideo(); centerDialogVisible = false">进阶视频教程
         </el-button>
       </div>
-      <div label-width="0px" style="text-align: center;margin: 3vh 0 2vh">
-        <el-button style="width: 200px;" type="warning" icon="el-icon-download" @click="toolsDown">代理工具集合
-        </el-button>
-      </div>
     </el-dialog>
-    <el-dialog :visible.sync="dialogUploadConfigVisible" :show-close="false" :close-on-click-modal="false"
+    <el-dialog :visible.sync="dialogUploadConfigVisible" custom-class="subconverter-dialog" :show-close="true" :close-on-click-modal="false"
       :close-on-press-escape="false" width="80%">
       <el-tabs v-model="activeName" type="card">
         <el-tab-pane label="远程配置上传" name="first">
@@ -266,7 +278,7 @@
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
-    <el-dialog :visible.sync="dialogLoadConfigVisible" :show-close="false" :close-on-click-modal="false"
+    <el-dialog :visible.sync="dialogLoadConfigVisible" custom-class="subconverter-dialog" :show-close="true" :close-on-click-modal="false"
       :close-on-press-escape="false" width="80%">
       <div slot="title">
         可以从生成的长/短链接中解析信息,填入页面中去
@@ -299,7 +311,6 @@ const advancedVideo = process.env.VUE_APP_ADVANCED_VIDEO
 const tgBotLink = process.env.VUE_APP_BOT_LINK
 const yglink = process.env.VUE_APP_YOUTUBE_LINK
 const bzlink = process.env.VUE_APP_BILIBILI_LINK
-const downld = 'http://' + window.location.host + '/download.html'
 export default {
   data() {
     return {
@@ -335,13 +346,12 @@ export default {
           "v1.mk": "https://v1.mk/short",
           "d1.mk": "https://d1.mk/short",
           "dlj.tf": "https://dlj.tf/short",
-          "suo.yt": "https://suo.yt/short",
         },
         customBackend: {
-          "CM负载均衡后端【vless reality+hy1+hy2】": "https://subapi.cmliussss.net",
-          "CM应急备用后端【vless reality+hy1+hy2】": "https://subapi.fxxk.dedyn.io",
-          "肥羊增强型后端【vless reality+hy1+hy2】": "https://url.v1.mk",
-          "肥羊备用后端【vless reality+hy1+hy2】": "https://api.v1.mk",
+          "CM提供-负载均衡后端": "https://subapi.cmliussss.net",
+          "CM提供-应急备用后端": "https://subapi.fxxk.dedyn.io",
+          "肥羊提供-增强型后端": "https://url.v1.mk",
+          "肥羊提供-备用后端": "https://api.v1.mk",
         },
         backendOptions: [
           { value: "https://subapi.cmliussss.net" },
@@ -922,9 +932,6 @@ export default {
     gotoYouTuBe() {
       window.open(yglink);
     },
-    toolsDown() {
-      window.open(downld);
-    },
     gotoBasicVideo() {
       this.$alert("别忘了关注友善的肥羊哦！", {
         type: "warning",
@@ -1293,9 +1300,8 @@ export default {
         .then(res => {
           this.backendVersion = res.data.replace(/backend\n$/gm, "");
           this.backendVersion = this.backendVersion.replace("subconverter", "SubConverter");
-          let a = this.form.customBackend.indexOf("url.v1.mk") !== -1 || this.form.customBackend.indexOf("api.v1.mk") !== -1;
           let b = this.form.customBackend.indexOf("127.0.0.1") !== -1;
-          a ? this.$message.success(`${this.backendVersion}` + "肥羊负载均衡增强版后端，已屏蔽免费节点池（会返回403），额外支持vless reality+hysteria+hysteria2订阅转换") : b ? this.$message.success(`${this.backendVersion}` + "本地局域网自建版后端") : this.$message.success(`${this.backendVersion}`);
+          b ? this.$message.success(`${this.backendVersion}` + "本地局域网自建版后端") : this.$message.success(`${this.backendVersion}`);
         })
         .catch(() => {
           this.$message.error("请求SubConverter版本号返回数据失败，该后端不可用！");
@@ -1304,3 +1310,456 @@ export default {
   }
 };
 </script>
+<style>
+.light-mode .subconverter-page {
+  --page-surface: #d8e0e5;
+  --page-grid: rgba(51, 65, 85, 0.05);
+  --bg: rgba(241, 245, 247, 0.84);
+  --panel: rgba(246, 249, 250, 0.92);
+  --soft: #e5ecef;
+  --text: #000;
+  --muted: rgba(15, 23, 42, 0.66);
+  --line: rgba(51, 65, 85, 0.12);
+  --accent: #2f6f68;
+  --accent-strong: #4e708b;
+  --accent-fog: rgba(78, 112, 139, 0.12);
+  --accent-ring: rgba(78, 112, 139, 0.16);
+  --accent-outline: rgba(78, 112, 139, 0.42);
+  --shadow: 0 24px 56px rgba(51, 65, 85, 0.12);
+}
+
+.dark-mode .subconverter-page {
+  --page-surface: transparent;
+  --page-grid: rgba(148, 163, 184, 0.05);
+  --bg: rgba(7, 16, 30, 0.78);
+  --panel: rgba(8, 20, 38, 0.92);
+  --soft: rgba(15, 23, 42, 0.7);
+  --text: #f8fbff;
+  --muted: rgba(226, 232, 240, 0.7);
+  --line: rgba(148, 163, 184, 0.16);
+  --accent: #38bdf8;
+  --accent-strong: #67e8f9;
+  --accent-fog: rgba(56, 189, 248, 0.16);
+  --accent-ring: rgba(56, 189, 248, 0.14);
+  --accent-outline: rgba(56, 189, 248, 0.45);
+  --shadow: 0 30px 80px rgba(2, 6, 23, 0.52);
+}
+
+.subconverter-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 28px 18px 104px;
+  color: var(--text);
+  font-family: "Noto Sans SC", sans-serif;
+  overflow: hidden;
+  background-color: var(--page-surface);
+  background-image:
+    linear-gradient(var(--page-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--page-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.subconverter-glow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.subconverter-glow--one {
+  left: -120px;
+  top: 20px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.24) 0, rgba(34, 211, 238, 0) 72%);
+}
+
+.subconverter-glow--two {
+  right: -120px;
+  bottom: 40px;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0, rgba(16, 185, 129, 0) 72%);
+}
+
+.light-mode .subconverter-glow {
+  display: none;
+}
+
+.subconverter-layout {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1032px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 16px;
+}
+
+.subconverter-card,
+.subconverter-dialog {
+  border: 1px solid var(--line) !important;
+  border-radius: 28px !important;
+  background: var(--bg) !important;
+  box-shadow: var(--shadow) !important;
+  backdrop-filter: blur(18px) saturate(180%);
+}
+
+.subconverter-card .el-card__header,
+.subconverter-card .el-card__body {
+  background: transparent !important;
+}
+
+.subconverter-card .el-card__header {
+  padding: 28px 28px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.subconverter-card .el-card__body {
+  padding: 22px 28px 28px;
+}
+
+.subconverter-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.subconverter-hero__eyebrow {
+  display: inline-flex;
+  font: 700 12px/1 "Space Grotesk", "Noto Sans SC", sans-serif;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.subconverter-hero__topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: stretch;
+  margin-top: 10px;
+}
+
+.subconverter-hero__title {
+  margin: 0;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-height: 88px;
+  font: 700 clamp(2.8rem, 6vw, 5.4rem)/0.92 "Space Grotesk", "Noto Sans SC", sans-serif;
+  letter-spacing: -0.04em;
+  color: var(--text) !important;
+}
+
+.subconverter-hero__desc {
+  margin: 14px 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.subconverter-hero__stats {
+  flex: 0 0 clamp(320px, 34vw, 420px);
+  width: clamp(320px, 34vw, 420px);
+  min-width: clamp(320px, 34vw, 420px);
+  max-width: clamp(320px, 34vw, 420px);
+}
+
+.subconverter-stat {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 88px;
+  padding: 16px 18px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background:
+    linear-gradient(135deg, var(--accent-fog), transparent 60%),
+    var(--panel);
+}
+
+.subconverter-stat span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.subconverter-stat strong {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  font: 700 15px/1.4 "Space Grotesk", "Noto Sans SC", sans-serif;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subconverter-stat--backend strong {
+  font-size: 18px;
+  letter-spacing: 0.01em;
+}
+
+.subconverter-form .el-form-item {
+  margin-bottom: 18px;
+}
+
+.subconverter-page .el-form-item__label {
+  color: var(--text) !important;
+  font-weight: 700;
+  padding-bottom: 8px;
+}
+
+.subconverter-page .el-input__inner,
+.subconverter-page .el-textarea__inner {
+  border: 1px solid transparent !important;
+  border-radius: 16px !important;
+  background: var(--soft) !important;
+  color: var(--text) !important;
+  font-family: "JetBrains Mono", "Noto Sans SC", monospace;
+}
+
+.subconverter-page .el-input__inner {
+  height: 46px;
+}
+
+.subconverter-page .el-textarea__inner {
+  padding: 14px 16px;
+}
+
+.subconverter-page .el-input__inner:focus,
+.subconverter-page .el-textarea__inner:focus,
+.subconverter-page .el-select .el-input.is-focus .el-input__inner {
+  border-color: var(--accent-outline) !important;
+  box-shadow: 0 0 0 4px var(--accent-ring);
+}
+
+.subconverter-page .el-input__inner::-webkit-input-placeholder,
+.subconverter-page .el-textarea__inner::-webkit-input-placeholder {
+  color: var(--muted) !important;
+}
+
+.subconverter-main-btn {
+  border-radius: 16px !important;
+}
+
+.subconverter-advanced__wrap {
+  margin-top: 10px;
+  padding: 14px 16px 0;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: linear-gradient(180deg, var(--accent-fog), transparent 86%);
+}
+
+.subconverter-advanced,
+.subconverter-page .el-collapse-item__wrap,
+.subconverter-page .el-collapse-item__header {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+.subconverter-page .el-collapse-item__arrow {
+  color: var(--muted);
+}
+
+.subconverter-output {
+  margin-bottom: 18px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--panel);
+}
+
+.subconverter-output .el-form-item__content {
+  margin-left: 0 !important;
+}
+
+.subconverter-output .el-input-group__append,
+.subconverter-output .el-input-group__prepend {
+  border-color: transparent !important;
+  background: transparent !important;
+}
+
+.subconverter-output .el-input-group__append {
+  padding-left: 10px !important;
+}
+
+.subconverter-output .el-input-group__append .el-button {
+  margin-left: 2px;
+  border-radius: 12px !important;
+  background: #0f172a !important;
+  color: #fff !important;
+}
+
+.dark-mode .subconverter-output .el-input-group__append .el-button {
+  background: #e2e8f0 !important;
+  color: #020617 !important;
+}
+
+.subconverter-action-row .el-form-item__content {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-left: 0 !important;
+}
+
+.subconverter-action-row .subconverter-main-btn + .subconverter-main-btn {
+  margin-left: 0;
+}
+
+.subconverter-main-btn {
+  width: 160px !important;
+  height: 48px;
+  border: 0 !important;
+  background: linear-gradient(135deg, var(--accent-strong) 0, var(--accent) 100%) !important;
+}
+
+.subconverter-main-btn--alt {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0, rgba(51, 65, 85, 0.92) 100%) !important;
+}
+
+.subconverter-main-btn--parse {
+  background: linear-gradient(135deg, #0369a1 0, #0ea5e9 100%) !important;
+}
+
+.subconverter-social-dock {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 8;
+  display: flex;
+  gap: 10px;
+  padding: 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg);
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(18px) saturate(180%);
+}
+
+.dark-mode .subconverter-social-dock {
+  background: rgba(7, 16, 30, 0.78);
+}
+
+.subconverter-social-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, var(--accent-fog), transparent 65%),
+    var(--panel);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.subconverter-social-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-outline);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
+}
+
+.subconverter-social-btn__icon {
+  width: 20px;
+  height: 20px;
+}
+
+.subconverter-theme-toggle-icon {
+  font-size: 19px;
+  line-height: 1;
+}
+
+.subconverter-dialog .el-dialog__header,
+.subconverter-dialog .el-dialog__body,
+.subconverter-dialog .el-dialog__footer {
+  background: transparent !important;
+}
+
+.subconverter-dialog .el-dialog__title {
+  color: var(--text);
+  font: 700 18px/1.2 "Space Grotesk", "Noto Sans SC", sans-serif;
+}
+
+.subconverter-dialog .el-tabs__item,
+.subconverter-dialog .el-link,
+.subconverter-dialog .el-form-item__label {
+  color: var(--text) !important;
+}
+
+.subconverter-dialog .el-tabs__item.is-active {
+  color: var(--accent) !important;
+}
+
+.subconverter-dialog .el-tabs--card > .el-tabs__header .el-tabs__item {
+  border-color: var(--line) !important;
+}
+
+.subconverter-dialog .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
+  background: var(--panel) !important;
+}
+
+.subconverter-dialog .el-dialog__headerbtn .el-dialog__close {
+  color: var(--muted) !important;
+}
+
+@media (max-width: 760px) {
+  .subconverter-page {
+    padding: 16px 10px 92px;
+  }
+
+  .subconverter-card .el-card__header,
+  .subconverter-card .el-card__body {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .subconverter-layout {
+    padding: 0;
+  }
+
+  .subconverter-hero__topline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .subconverter-hero__title {
+    min-height: 0;
+  }
+
+  .subconverter-hero__stats {
+    flex-basis: min(100%, 420px);
+    width: min(100%, 420px);
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .subconverter-action-row .el-form-item__content {
+    flex-direction: column;
+  }
+
+  .subconverter-main-btn {
+    width: 100% !important;
+  }
+
+  .subconverter-social-dock {
+    right: 12px;
+    bottom: 12px;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .subconverter-social-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+</style>
