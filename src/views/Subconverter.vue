@@ -348,12 +348,14 @@ export default {
           "dlj.tf": "https://dlj.tf/short",
         },
         customBackend: {
+          "自建后端": "https://uk.freeus.us.to",
           "CM提供-负载均衡后端": "https://subapi.cmliussss.net",
           "CM提供-应急备用后端": "https://subapi.fxxk.dedyn.io",
           "肥羊提供-增强型后端": "https://url.v1.mk",
           "肥羊提供-备用后端": "https://api.v1.mk",
         },
         backendOptions: [
+          { value: "https://uk.freeus.us.to" },
           { value: "https://subapi.cmliussss.net" },
           { value: "https://subapi.fxxk.dedyn.io" },
           { value: "https://url.v1.mk" },
